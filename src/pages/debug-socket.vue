@@ -42,7 +42,7 @@
                 <v-list-item-subtitle>{{ currentDataKey }}</v-list-item-subtitle>
               </v-list-item>
             </v-list>
-            <v-divider class="my-4"/>
+            <v-divider class="my-4" />
             <v-row>
               <v-col
                 cols="12"
@@ -83,11 +83,17 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <v-divider class="my-4"/>
+            <v-divider class="my-4" />
             <v-row>
               <v-col cols="12">
-                <v-card border color="primary" variant="tonal">
-                  <v-card-title class="text-subtitle-1">聊天室消息</v-card-title>
+                <v-card
+                  border
+                  color="primary"
+                  variant="tonal"
+                >
+                  <v-card-title class="text-subtitle-1">
+                    聊天室消息
+                  </v-card-title>
                   <v-card-text>
                     <v-textarea
                       v-model="chatInput"
@@ -97,7 +103,7 @@
                       rows="2"
                     />
                     <div class="d-flex">
-                      <v-spacer/>
+                      <v-spacer />
                       <v-btn
                         :disabled="!canSendChat"
                         color="primary"
@@ -178,7 +184,7 @@
         <v-card border>
           <v-card-title class="d-flex align-center">
             事件日志
-            <v-spacer/>
+            <v-spacer />
             <v-btn
               color="error"
               size="small"
@@ -255,8 +261,8 @@ function pushLog(event, payload) {
   if (logs.value.length > 200) logs.value.pop()
 }
 
-function wireSocketBaseEvents() {
-  const s = getSocket()
+async function wireSocketBaseEvents() {
+  const s = await getSocket()
   connected.value = !!s.connected
   socketId.value = s.id || ''
 
@@ -276,40 +282,40 @@ function wireSocketBaseEvents() {
   s.on('reconnect', (n) => pushLog('reconnect', {attempt: n}))
 }
 
-function wireBusinessEvents() {
+async function wireBusinessEvents() {
   // key changes
-  socketOn('kv-key-changed', (msg) => {
+  await socketOn('kv-key-changed', (msg) => {
     pushLog('kv-key-changed', msg)
   })
   // device joined count broadcast
-  socketOn('device-joined', (msg) => {
+  await socketOn('device-joined', (msg) => {
     pushLog('device-joined', msg)
   })
   // join success
-  socketOn('joined', (msg) => {
+  await socketOn('joined', (msg) => {
     pushLog('joined', msg)
   })
   // join error
-  socketOn('join-error', (msg) => {
+  await socketOn('join-error', (msg) => {
     pushLog('join-error', msg)
   })
   // chat message (旧接口)
-  socketOn('chat:message', (msg) => {
+  await socketOn('chat:message', (msg) => {
     pushLog('chat:message', msg)
   })
   // device events (新通用事件接口)
-  socketOn('device-event', (eventData) => {
+  await socketOn('device-event', (eventData) => {
     pushLog('device-event', eventData)
   })
 }
 
-function handleJoinToken(token) {
+async function handleJoinToken(token) {
   try {
     if (!token) {
       pushLog('join-error', 'Token 为空')
       return
     }
-    joinToken(token)
+    await joinToken(token)
     joinedToken.value = token
     pushLog('join-token', {token})
   } catch (e) {
@@ -317,9 +323,9 @@ function handleJoinToken(token) {
   }
 }
 
-function handleLeaveToken(token) {
+async function handleLeaveToken(token) {
   try {
-    leaveToken(token)
+    await leaveToken(token)
     if (joinedToken.value === token) joinedToken.value = ''
     pushLog('leave-token', {token})
   } catch (e) {
@@ -327,9 +333,9 @@ function handleLeaveToken(token) {
   }
 }
 
-function handleLeaveAll() {
+async function handleLeaveAll() {
   try {
-    leaveAll()
+    await leaveAll()
     joinedToken.value = ''
     pushLog('leave-all', {})
   } catch (e) {
@@ -337,9 +343,9 @@ function handleLeaveAll() {
   }
 }
 
-function reconnect() {
+async function reconnect() {
   try {
-    const s = getSocket()
+    const s = await getSocket()
     s.connect()
   } catch (e) {
     pushLog('reconnect-error', String(e))
@@ -387,11 +393,11 @@ function clearLogs() {
   logs.value = []
 }
 
-onMounted(() => {
+onMounted(async () => {
   // init socket + base events
-  getSocket()
-  wireSocketBaseEvents()
-  wireBusinessEvents()
+  await getSocket()
+  await wireSocketBaseEvents()
+  await wireBusinessEvents()
 
   // auto join with current token if present
   if (currentToken.value) {

@@ -447,7 +447,7 @@ export default {
       }
     },
   },
-  mounted() {
+  async mounted() {
     try {
       const stored = localStorage.getItem('chat.lastVisit')
       if (stored) this.lastVisit = stored
@@ -456,7 +456,7 @@ export default {
     }
 
     // Prepare socket
-    const s = getSocket()
+    const s = await getSocket()
     this.connected = !!s.connected
     this.socketId = s.id || ''
 
@@ -485,7 +485,7 @@ export default {
     }
 
     // Listen chat messages (旧接口兼容)
-    const offMessage = socketOn('chat:message', createSafeHandler((msg) => {
+    const offMessage = await socketOn('chat:message', createSafeHandler((msg) => {
       this.pushMessage(msg)
       this.addEvent({
         _id: `legacy-chat-${Date.now()}-${Math.random()}`,
@@ -497,9 +497,10 @@ export default {
         senderInfo: msg.senderInfo
       })
     }))
+    if (this.isDestroying) { if (offMessage) offMessage(); return }
 
     // Listen direct chat events (新的直接聊天事件)
-    const offDirectChat = socketOn('chat', createSafeHandler((eventData) => {
+    const offDirectChat = await socketOn('chat', createSafeHandler((eventData) => {
       if (eventData && eventData.content && eventData.content.text) {
         // 处理新格式的直接聊天事件
         const chatMsg = {
@@ -522,6 +523,11 @@ export default {
         })
       }
     }))
+    if (this.isDestroying) {
+        if (offMessage) offMessage();
+        if (offDirectChat) offDirectChat();
+        return;
+    }
 
     // Listen device events (通用事件接口 - 保留兼容)
     this.deviceEventHandler = createDeviceEventHandler({
@@ -554,10 +560,16 @@ export default {
       }),
       enableLegacySupport: true
     })
-    const offDeviceEvent = socketOn('device-event', this.deviceEventHandler)
+    const offDeviceEvent = await socketOn('device-event', this.deviceEventHandler)
+    if (this.isDestroying) {
+        if (offMessage) offMessage();
+        if (offDirectChat) offDirectChat();
+        if (offDeviceEvent) offDeviceEvent();
+        return;
+    }
 
     // 监听 KV 变化事件（支持新旧格式）
-    const offKvChanged = socketOn('kv-key-changed', createSafeHandler((eventData) => {
+    const offKvChanged = await socketOn('kv-key-changed', createSafeHandler((eventData) => {
       // 新格式：直接事件数据
       if (eventData.content && eventData.timestamp) {
         this.addEvent({
@@ -580,9 +592,16 @@ export default {
         })
       }
     }))
+    if (this.isDestroying) {
+        if (offMessage) offMessage();
+        if (offDirectChat) offDirectChat();
+        if (offDeviceEvent) offDeviceEvent();
+        if (offKvChanged) offKvChanged();
+        return;
+    }
 
     // 监听紧急通知事件
-    const offUrgentNotice = socketOn('urgent-notice', createSafeHandler((notificationData) => {
+    const offUrgentNotice = await socketOn('urgent-notice', createSafeHandler((notificationData) => {
       console.log('收到紧急通知:', notificationData)
 
       // 添加到事件列表
@@ -599,9 +618,17 @@ export default {
       // 立即显示紧急通知弹窗
       this.showUrgentNotification(notificationData)
     }))
+    if (this.isDestroying) {
+        if (offMessage) offMessage();
+        if (offDirectChat) offDirectChat();
+        if (offDeviceEvent) offDeviceEvent();
+        if (offKvChanged) offKvChanged();
+        if (offUrgentNotice) offUrgentNotice();
+        return;
+    }
 
     // 监听通知事件
-    const offNotification = socketOn('notification', createSafeHandler((notificationData) => {
+    const offNotification = await socketOn('notification', createSafeHandler((notificationData) => {
       console.log('收到通知事件:', notificationData)
 
       // 添加到事件列表
@@ -617,7 +644,18 @@ export default {
 
       // 立即显示通知弹窗
       this.showUrgentNotification(notificationData)
-    }))    // 保存清理函数
+    }))
+    if (this.isDestroying) {
+        if (offMessage) offMessage();
+        if (offDirectChat) offDirectChat();
+        if (offDeviceEvent) offDeviceEvent();
+        if (offKvChanged) offKvChanged();
+        if (offUrgentNotice) offUrgentNotice();
+        if (offNotification) offNotification();
+        return;
+    }
+
+    // 保存清理函数
     this.cleanupFunctions = [
       offMessage,
       offDirectChat,

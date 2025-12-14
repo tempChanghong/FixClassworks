@@ -8,12 +8,21 @@
     height="100%"
     @click="fetchSentence"
   >
-    <v-card-text class="pa-6 d-flex flex-column justify-center" style="height: 100%">
-      <div class="text-h6 font-weight-medium mb-4 serif-font" style="white-space: pre-wrap; line-height: 1.6;">
+    <v-card-text
+      class="pa-6 d-flex flex-column justify-center"
+      style="height: 100%"
+    >
+      <div
+        class="text-h6 font-weight-medium mb-4 serif-font"
+        style="white-space: pre-wrap; line-height: 1.6;"
+      >
         {{ sentence }}
       </div>
       <div class="text-subtitle-2 text-medium-emphasis text-right serif-font">
-        <span v-if="author" class="mr-2">{{ author }}</span>
+        <span
+          v-if="author"
+          class="mr-2"
+        >{{ author }}</span>
         <span v-if="origin">《{{ origin }}》</span>
       </div>
     </v-card-text>

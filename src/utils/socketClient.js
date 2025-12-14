@@ -2,12 +2,13 @@
 // - Uses server domain from settings when available
 // - Exposes join/leave helpers and event on/off wrappers
 
-import {io} from 'socket.io-client';
 import {getSetting} from '@/utils/settings';
 
 let socket = null;
 let connectedDomain = null;
 const listeners = new Set();
+let socketIoClient = null;
+let importPromise = null;
 
 export function getServerUrl() {
   // Prefer configured server domain; fallback to env; then current origin
@@ -16,7 +17,7 @@ export function getServerUrl() {
   return cfg || envUrl || window.location.origin;
 }
 
-export function getSocket() {
+export async function getSocket() {
   const serverUrl = getServerUrl();
   if (!socket || connectedDomain !== serverUrl) {
     if (socket) {
@@ -27,8 +28,22 @@ export function getSocket() {
       }
       socket = null;
     }
+
+    // Dynamically import socket.io-client with race condition protection
+    if (!socketIoClient) {
+      if (!importPromise) {
+        importPromise = import('socket.io-client');
+      }
+      socketIoClient = (await importPromise).io;
+    }
+
+    // Double check socket didn't get created by another concurrent call while we awaited
+    if (socket && connectedDomain === serverUrl) {
+        return socket;
+    }
+
     connectedDomain = serverUrl;
-    socket = io(serverUrl, {transports:  ["polling","websocket"]});
+    socket = socketIoClient(serverUrl, {transports:  ["polling","websocket"]});
 
     // Re-attach previously registered event handlers on new socket instance
     listeners.forEach(({event, handler}) => {
@@ -38,14 +53,14 @@ export function getSocket() {
   return socket;
 }
 
-export function on(event, handler) {
-  const s = getSocket();
+export async function on(event, handler) {
+  const s = await getSocket();
   s.on(event, handler);
   listeners.add({event, handler});
   return () => off(event, handler);
 }
 
-export function off(event, handler) {
+export async function off(event, handler) {
   if (!socket) return;
   socket.off(event, handler);
   // Remove only matching entry
@@ -56,37 +71,37 @@ export function off(event, handler) {
   }
 }
 
-export function joinToken(token) {
-  const s = getSocket();
+export async function joinToken(token) {
+  const s = await getSocket();
   if (!token) return;
   s.emit('join-token', {token});
 }
 
-export function leaveToken(token) {
+export async function leaveToken(token) {
   if (!socket) return;
   socket.emit('leave-token', {token});
 }
 
-export function leaveAll() {
+export async function leaveAll() {
   if (!socket) return;
   socket.emit('leave-all');
 }
 
-export function onConnect(handler) {
-  const s = getSocket();
+export async function onConnect(handler) {
+  const s = await getSocket();
   s.on('connect', handler);
   return () => s.off('connect', handler);
 }
 
-export function sendEvent(type, content = null) {
-  const s = getSocket();
+export async function sendEvent(type, content = null) {
+  const s = await getSocket();
   s.emit('send-event', {
     type,
     content
   });
 }
 
-export function disconnect() {
+export async function disconnect() {
   if (!socket) return;
   try {
     socket.disconnect();

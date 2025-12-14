@@ -19,7 +19,7 @@ export default {
      */
     async sendEvent(eventName, content = {}) {
       try {
-        sendEvent(eventName, content);
+        await sendEvent(eventName, content);
 
         this.$emit("sent", {
           eventName,

@@ -5,10 +5,18 @@
       <v-col cols="12">
         <v-card border>
           <v-card-title class="d-flex align-center">
-            <v-icon class="mr-2" color="primary">mdi-network</v-icon>
+            <v-icon
+              class="mr-2"
+              color="primary"
+            >
+              mdi-network
+            </v-icon>
             Socket.IO 连接调试器
             <v-spacer />
-            <v-chip :color="connectionStatus.color" size="small">
+            <v-chip
+              :color="connectionStatus.color"
+              size="small"
+            >
               {{ connectionStatus.text }}
             </v-chip>
           </v-card-title>
@@ -16,7 +24,10 @@
       </v-col>
 
       <!-- 连接信息卡片 -->
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-card border>
           <v-card-title>连接信息</v-card-title>
           <v-card-text>
@@ -43,7 +54,10 @@
                 </template>
                 <v-list-item-title>传输方式</v-list-item-title>
                 <v-list-item-subtitle>
-                  <v-chip size="x-small" :color="transportColor">
+                  <v-chip
+                    size="x-small"
+                    :color="transportColor"
+                  >
                     {{ transport || '未知' }}
                   </v-chip>
                 </v-list-item-subtitle>
@@ -113,40 +127,71 @@
       </v-col>
 
       <!-- 统计信息卡片 -->
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-card border>
           <v-card-title>统计信息</v-card-title>
           <v-card-text>
             <v-row>
               <v-col cols="6">
-                <v-card variant="tonal" color="success">
+                <v-card
+                  variant="tonal"
+                  color="success"
+                >
                   <v-card-text class="text-center">
-                    <div class="text-h4">{{ stats.eventsReceived }}</div>
-                    <div class="text-caption">接收事件</div>
+                    <div class="text-h4">
+                      {{ stats.eventsReceived }}
+                    </div>
+                    <div class="text-caption">
+                      接收事件
+                    </div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="6">
-                <v-card variant="tonal" color="primary">
+                <v-card
+                  variant="tonal"
+                  color="primary"
+                >
                   <v-card-text class="text-center">
-                    <div class="text-h4">{{ stats.eventsSent }}</div>
-                    <div class="text-caption">发送事件</div>
+                    <div class="text-h4">
+                      {{ stats.eventsSent }}
+                    </div>
+                    <div class="text-caption">
+                      发送事件
+                    </div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="6">
-                <v-card variant="tonal" color="warning">
+                <v-card
+                  variant="tonal"
+                  color="warning"
+                >
                   <v-card-text class="text-center">
-                    <div class="text-h4">{{ stats.errors }}</div>
-                    <div class="text-caption">错误次数</div>
+                    <div class="text-h4">
+                      {{ stats.errors }}
+                    </div>
+                    <div class="text-caption">
+                      错误次数
+                    </div>
                   </v-card-text>
                 </v-card>
               </v-col>
               <v-col cols="6">
-                <v-card variant="tonal" color="info">
+                <v-card
+                  variant="tonal"
+                  color="info"
+                >
                   <v-card-text class="text-center">
-                    <div class="text-h4">{{ stats.reconnects }}</div>
-                    <div class="text-caption">重连次数</div>
+                    <div class="text-h4">
+                      {{ stats.reconnects }}
+                    </div>
+                    <div class="text-caption">
+                      重连次数
+                    </div>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -175,14 +220,26 @@
       </v-col>
 
       <!-- 事件监控 -->
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-card border>
           <v-card-title>
             事件监控
-            <v-chip class="ml-2" size="small">{{ activeListeners.size }} 个监听器</v-chip>
+            <v-chip
+              class="ml-2"
+              size="small"
+            >
+              {{ activeListeners.size }} 个监听器
+            </v-chip>
           </v-card-title>
           <v-card-text>
-            <v-list density="compact" max-height="300" style="overflow-y: auto">
+            <v-list
+              density="compact"
+              max-height="300"
+              style="overflow-y: auto"
+            >
               <v-list-item v-if="activeListeners.size === 0">
                 <v-list-item-title class="text-center text-disabled">
                   暂无活动监听器
@@ -193,7 +250,9 @@
                 :key="listener"
               >
                 <template #prepend>
-                  <v-icon size="small">mdi-eye</v-icon>
+                  <v-icon size="small">
+                    mdi-eye
+                  </v-icon>
                 </template>
                 <v-list-item-title>{{ listener }}</v-list-item-title>
               </v-list-item>
@@ -203,7 +262,10 @@
       </v-col>
 
       <!-- 自定义事件发送 -->
-      <v-col cols="12" md="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-card border>
           <v-card-title>发送自定义事件</v-card-title>
           <v-card-text>
@@ -272,9 +334,15 @@
                 <span class="log-time">[{{ log.time }}]</span>
                 <span class="log-type">[{{ log.type.toUpperCase() }}]</span>
                 <span class="log-message">{{ log.message }}</span>
-                <pre v-if="log.data" class="log-data">{{ log.data }}</pre>
+                <pre
+                  v-if="log.data"
+                  class="log-data"
+                >{{ log.data }}</pre>
               </div>
-              <div v-if="logs.length === 0" class="text-center text-disabled pa-8">
+              <div
+                v-if="logs.length === 0"
+                class="text-center text-disabled pa-8"
+              >
                 暂无日志
               </div>
             </div>
@@ -288,7 +356,10 @@
           <v-card-title>连接诊断</v-card-title>
           <v-card-text>
             <v-row>
-              <v-col cols="12" md="4">
+              <v-col
+                cols="12"
+                md="4"
+              >
                 <v-btn
                   block
                   color="info"
@@ -298,7 +369,10 @@
                   测试连接
                 </v-btn>
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col
+                cols="12"
+                md="4"
+              >
                 <v-btn
                   block
                   color="success"
@@ -309,7 +383,10 @@
                   测量延迟
                 </v-btn>
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col
+                cols="12"
+                md="4"
+              >
                 <v-btn
                   block
                   color="warning"
@@ -445,8 +522,8 @@ function updateConnectionDuration() {
 let eventHandlers = null;
 
 // Socket 事件处理
-function setupSocketListeners() {
-  const socket = getSocket();
+async function setupSocketListeners() {
+  const socket = await getSocket();
 
   // 如果已有事件处理器,先清理
   if (eventHandlers) {
@@ -590,9 +667,9 @@ function cleanupSocketListeners() {
 }
 
 // 连接控制
-function handleConnect() {
+async function handleConnect() {
   try {
-    const socket = getSocket();
+    const socket = await getSocket();
     socket.connect();
     addLog('info', '正在连接...');
   } catch (error) {
@@ -600,18 +677,18 @@ function handleConnect() {
   }
 }
 
-function handleDisconnect() {
+async function handleDisconnect() {
   try {
-    disconnect();
+    await disconnect();
     addLog('info', '已手动断开连接');
   } catch (error) {
     addLog('error', '断开连接失败', { message: error.message });
   }
 }
 
-function handleReconnect() {
+async function handleReconnect() {
   try {
-    disconnect();
+    await disconnect();
     setTimeout(() => {
       // 重新初始化并设置监听器
       setupSocketListeners();
@@ -623,9 +700,9 @@ function handleReconnect() {
 }
 
 // 发送自定义事件
-function sendCustomEvent() {
+async function sendCustomEvent() {
   try {
-    const socket = getSocket();
+    const socket = await getSocket();
     let data;
     try {
       data = JSON.parse(customEvent.value.data);
@@ -643,11 +720,11 @@ function sendCustomEvent() {
 }
 
 // 诊断工具
-function testConnection() {
+async function testConnection() {
   diagnosticResult.value = null;
   addLog('info', '开始连接测试...');
 
-  const socket = getSocket();
+  const socket = await getSocket();
   const timeout = setTimeout(() => {
     diagnosticResult.value = {
       type: 'error',
@@ -684,8 +761,8 @@ function testConnection() {
   }
 }
 
-function measureLatency() {
-  const socket = getSocket();
+async function measureLatency() {
+  const socket = await getSocket();
   const start = Date.now();
 
   socket.emit('ping', () => {
@@ -698,9 +775,9 @@ function measureLatency() {
   });
 }
 
-function simulateError() {
+async function simulateError() {
   addLog('warning', '模拟错误场景...');
-  const socket = getSocket();
+  const socket = await getSocket();
 
   // 发送一个不存在的事件
   socket.emit('nonexistent-event-test', { test: true });
