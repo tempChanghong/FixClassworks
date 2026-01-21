@@ -144,6 +144,7 @@
 
         <v-tabs-window-item value="student">
           <student-list-card :is-mobile="isMobile" border/>
+          <teacher-list-card :is-mobile="isMobile" border class="mt-4"/>
         </v-tabs-window-item>
         <v-tabs-window-item value="share">
           <settings-link-generator border class="mt-4"/>
@@ -179,6 +180,10 @@
             border
             @saved="onSettingsSaved"
           />
+        </v-tabs-window-item>
+
+        <v-tabs-window-item value="notification">
+          <notification-sound-settings border />
         </v-tabs-window-item>
 
         <v-tabs-window-item value="hitokoto">
@@ -268,6 +273,7 @@ import {
 import MessageLog from "@/components/MessageLog.vue";
 import SettingsCard from "@/components/SettingsCard.vue";
 import StudentListCard from "@/components/settings/StudentListCard.vue";
+import TeacherListCard from "@/components/settings/TeacherListCard.vue";
 import AboutCard from "@/components/settings/AboutCard.vue";
 import "../styles/settings.scss";
 import SettingsExplorer from "@/components/settings/SettingsExplorer.vue";
@@ -277,6 +283,7 @@ import HomeworkTemplateCard from "@/components/settings/cards/HomeworkTemplateCa
 import SubjectManagementCard from "@/components/settings/cards/SubjectManagementCard.vue";
 import KvDatabaseCard from "@/components/settings/cards/KvDatabaseCard.vue";
 import HitokotoSettings from "@/components/HitokotoSettings.vue";
+import NotificationSoundSettings from "@/components/settings/NotificationSoundSettings.vue";
 
 export default {
   name: "Settings",
@@ -288,6 +295,7 @@ export default {
     MessageLog,
     SettingsCard,
     StudentListCard,
+    TeacherListCard,
     AboutCard,
     DataProviderSettingsCard,
     ThemeSettingsCard,
@@ -299,6 +307,7 @@ export default {
     SubjectManagementCard,
     KvDatabaseCard,
     HitokotoSettings,
+    NotificationSoundSettings,
   },
   setup() {
     const {mobile} = useDisplay();
@@ -391,7 +400,7 @@ export default {
           value: "subject",
         },
         {
-          title: "学生列表",
+          title: "花名册",
           icon: "mdi-account-group",
           value: "student",
         },
@@ -419,6 +428,11 @@ export default {
           title: "主题",
           icon: "mdi-theme-light-dark",
           value: "theme",
+        },
+        {
+          title: "通知铃声",
+          icon: "mdi-bell-ring",
+          value: "notification",
         },
         {
           title: "一言",

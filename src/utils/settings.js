@@ -179,6 +179,13 @@ const settingsDefinitions = {
     icon: "mdi-monitor",
     // 启用后将不判断屏幕大小，强制使用一体机（桌面端）UI布局
   },
+  "display.lateStudentsArePresent": {
+    type: "boolean",
+    default: false,
+    description: "将迟到人数算入出勤人数",
+    icon: "mdi-clock-fast",
+    // 启用后，迟到的人数也会计入出勤人数
+  },
   // 服务器设置（合并了数据提供者设置）
   "server.domain": {
     type: "string",
@@ -398,6 +405,22 @@ const settingsDefinitions = {
     description: "主题模式",
     icon: "mdi-theme-light-dark",
     // 设置应用的主题模式，可选亮色或暗色主题
+  },
+
+  // 通知铃声设置
+  "notification.singleSound": {
+    type: "string",
+    default: "Teams 默认.mp3",
+    description: "单次通知铃声",
+    icon: "mdi-bell-ring",
+    // 设置单次通知时播放的音频文件
+  },
+  "notification.urgentSound": {
+    type: "string",
+    default: "Teams 默认通话铃.mp3",
+    description: "持续通知铃声",
+    icon: "mdi-bell-alert",
+    // 设置紧急通知时循环播放的音频文件
   },
 
   // 随机点名设置
